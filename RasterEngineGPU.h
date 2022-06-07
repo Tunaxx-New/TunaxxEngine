@@ -11,9 +11,14 @@ public:
 	void initialize();
 
 	//
+	// Method for initializion the engine
+	//
+	void gswitch();
+
+	//
 	// Method for drawing in bitmapBack_ from main window
 	// @params COLORREF** reference to array of pixels;
-	void draw(COLORREF**, int, COORD);
+	void draw(COLORREF**, int, COORD, int);
 
 	//
 	// Method for release the engine

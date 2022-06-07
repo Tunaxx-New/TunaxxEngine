@@ -13,6 +13,14 @@ void RasterEngineGPU::initialize()
 }
 
 
+
+void RasterEngineGPU::gswitch()
+{
+	gpu_.setActive();
+}
+
+
+
 //
 // CODE FOR:
 // Random noise blitting:
@@ -41,7 +49,7 @@ gpu_.execute(bitmap, size, sizeb, 0, rparam_, iparam_);
 /*
 gpu_.execute(bitmap, size, sizeb, 1, rparam_, iparam_);
 */
-void RasterEngineGPU::draw(COLORREF** bitmap, int size, COORD sizeb)
+void RasterEngineGPU::draw(COLORREF** bitmap, int size, COORD sizeb, int type)
 {
 	/*memset(*bitmap, 0, size * sizeof(COLORREF));
 
@@ -49,20 +57,30 @@ void RasterEngineGPU::draw(COLORREF** bitmap, int size, COORD sizeb)
 		mesh.rotate(1, 1, 1);
 		gpu_.execute(bitmap, size, sizeb, mesh.getObject(), mesh.getMatrixes());
 	}*/
-	/*gpu_.execute(bitmap, size, sizeb, 0, rparam_, iparam_);
-	if (switcher_) {
-		rparam_ += 0.01f;
-		iparam_ += 0.01f;
-		if (rparam_ > 1000)
-			switcher_ = false;
+	switch (type)
+	{
+	case 0:
+	{
+		gpu_.execute(bitmap, size, sizeb, 0, rparam_, iparam_);
+		if (switcher_) {
+			rparam_ += 0.1f;
+			iparam_ += 0.1f;
+			if (rparam_ > 1000)
+				switcher_ = false;
+		}
+		else {
+			rparam_ -= 0.01f;
+			iparam_ -= 0.001f;
+			if (rparam_ < 0)
+				switcher_ = true;
+		}
+		break;
 	}
-	else {
-		rparam_ -= 0.01f;
-		iparam_ -= 0.001f;
-		if (rparam_ < 0)
-			switcher_ = true;
-	}*/
-	gpu_.execute(bitmap, size, sizeb, 1, rparam_, iparam_);
+	
+	case 1:
+		gpu_.execute(bitmap, size, sizeb, 1, rparam_, iparam_);
+		break;
+	}
 }
 
 

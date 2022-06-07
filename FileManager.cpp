@@ -97,6 +97,58 @@ void FileManager<float>::parseObj(std::string filePath, object<float>& obj, std:
 
 
 
+bool alpha_or_space(const char c)
+{
+	return isalpha(c) || c == ' ' || c == '$';
+}
+
+
+
+template <>
+void FileManager<float>::parseRLE(std::string& original, std::string filePath, std::pair<int, int>& offset)
+{
+	FILE* file;
+	fopen_s(&file, getPath_(filePath).c_str(), "r");
+	if (file == NULL)
+		fopen_s(&file, filePath.c_str(), "r");
+	if (file == NULL)
+		throw 1;
+
+	while (true) {
+		char lineBuffer[FILE_LINE_SIZE];
+		int res = fscanf_s(file, "%[^\n]%*c", lineBuffer, sizeof(lineBuffer));
+		if (res == EOF)
+			break;
+
+		if (lineBuffer[0] != 'x' && lineBuffer[0] != 'y' && lineBuffer[0] != '#') {
+			size_t i = 0;
+			size_t repeat;
+			std::string compressed = lineBuffer;
+			while (i < compressed.length())
+			{
+				// normal alpha charachers
+				while (alpha_or_space(compressed[i]))
+					original.push_back(compressed[i++]);
+
+				// repeat number
+				repeat = 0;
+				while (isdigit(compressed[i]))
+					repeat = 10 * repeat + (compressed[i++] - '0');
+
+				// unroll releat charachters
+				auto char_to_unroll = compressed[i++];
+				while (repeat--)
+					original.push_back(char_to_unroll);
+			}
+		}
+		else if (lineBuffer[0] == 'x') {
+			sscanf_s(lineBuffer, "x = %d, y = %d", &offset.first, &offset.second);
+		}
+	}
+}
+
+
+
 std::string FileManager<float>::ExePath_()
 {
 	TCHAR buffer[MAX_PATH] = { 0 };

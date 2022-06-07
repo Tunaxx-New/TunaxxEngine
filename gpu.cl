@@ -96,33 +96,43 @@ void sqrComplex(struct Complex* c)
 //
 // This is function bitmapping the fractal
 //
-kernel void mandelbrotSet(global unsigned int* bitmap, short width, short height, float paramReal, float paramImag)
+kernel void mandelbrotSet(global unsigned int* bitmap, short width, short height, float paramReal, float paramImag, int offset)
 {
+	for (int gId = get_global_id(0); gId < height * width; gId += offset)
+	{
+
 	//Coordinates, index, complex numbers
-	int gId = get_global_id(0);
-	float x = (float)(gId % width - width / 2) / 500.0;
-	float y = (float)(gId / width - height / 2) / 500.0;
+	float x = (float)(gId % width - width / 2) / 500.0 / paramImag;
+	float y = (float)(gId / width - height / 2) / 500.0 / paramReal;
 	struct Complex c;
 	struct Complex z;
 
 	//Initializing
-	initializeComplex(&c, x, y);
-	initializeComplex(&z, paramImag, 0);
+	initializeComplex(&c, x - 1, y + 0.3);
+	initializeComplex(&z, 0, 0);
 	bitmap[gId] = 0;
 
 	//Cycle with alpha paint in complex function increase length
 	for (float j = 0; j < 2; j += 0.1f) {
 		int i;
-		for (i = 0; i < 80; i++)
+		for (i = 0; i < 20; i++)
 		{
 			sqrComplex(&z);
 			sumComplex(&z, &c);
 			if (absComplex(&z) <= j)
 				break;
 		}
-		short hue = 255 - 255 * i / 80;
-		hue /= 20;
-		bitmap[gId] += rgbToHex(hue, hue, hue);
+		short huer = 255 - 255 * i / 20 * absComplex(&z) * j;
+		short hueg = 255 - 255 / z.real;
+		short hueb = 255 - 255 / z.imag;
+		huer = 0;
+
+		huer /= 20;
+		hueg /= 20;
+		hueb /= 20;
+		bitmap[gId] += rgbToHex(huer, hueg, hueb);
+	}
+
 	}
 }
 //Fractal-Field---------------------------------------------------------------------------------

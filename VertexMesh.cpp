@@ -6,8 +6,8 @@
 #define PI 3.1416
 //For write in console
 extern Window* window;
-
-FileManager<float>* fileManager = new FileManager<float>();
+extern FileManager<float>* fileManager;
+//FileManager<float>* fileManager = new FileManager<float>();
 
 Mesh<float>::Mesh()
 {

@@ -207,7 +207,8 @@ void GPU::execute(COLORREF** bitmap, int bitmapSize, COORD sizeb, char type, flo
 				kernels_[func].setArg(2, sizeb.Y);
 				kernels_[func].setArg(3, rparam);
 				kernels_[func].setArg(4, iparam);
-				queue_.enqueueNDRangeKernel(kernels_[func], cl::NullRange, cl::NDRange(bitmapSize), cl::NullRange);
+				kernels_[func].setArg(5, 1024);
+				queue_.enqueueNDRangeKernel(kernels_[func], cl::NullRange, cl::NDRange(1024), cl::NullRange);
 				queue_.finish();
 			}
 			catch (const cl::Error& err) {
@@ -232,7 +233,8 @@ void GPU::execute(COLORREF** bitmap, int bitmapSize, COORD sizeb, char type, flo
 				kernels_[func].setArg(1, sizeb.X);
 				kernels_[func].setArg(2, sizeb.Y);
 				kernels_[func].setArg(3, NEWBITMAP);
-				kernels_[func].setArg(4, size / 1024);
+				kernels_[func].setArg(4, 1024);
+
 				//for (int i = 0; i < size / 1024; i++) {
 				//	queue_.enqueueNDRangeKernel(kernels_[func], cl::NDRange(i * 1024), cl::NDRange(1024), cl::NullRange);
 				//	queue_.finish();
@@ -305,7 +307,7 @@ std::string& GPU::getInfo()
 
 void GPU::setActive()
 {
-	active_ = true;
+	active_ = !active_;
 }
 
 

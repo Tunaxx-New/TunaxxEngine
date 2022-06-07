@@ -4,10 +4,13 @@
 #define WINDOW_NAME            L"Tunaxx Engine"
 #define CONSOLE_NAME           L"Tunaxx Console"
 
+#define OPEN_FILE_BUTTON       1
+#define CHANGE_RENDER_BUTTON   2
+
 #define WINDOW_X               0
 #define WINDOW_Y               0
-#define WINDOW_WIDTH           640
-#define WINDOW_HEIGHT          480
+#define WINDOW_WIDTH           1980
+#define WINDOW_HEIGHT          1080
 
 #define CONSOLE_X              0
 #define CONSOLE_Y              0
@@ -27,6 +30,7 @@
 #define FILE_LINE_SIZE         128
 #define FILE_CL                "gpu.cl"
 #define FILE_OBJ_CUBE          "\\standart\\objects\\kettle.obj"
+#define FILE_OBJ_LIF           "\\standart\\jslife\\misc\\bubbles-2c3o.lif"
 
 #define OBJ_COORD_COUNT        3
 #define OBJ_VERTEX_COUNT_MAX   4

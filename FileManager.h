@@ -13,6 +13,12 @@ public:
 	// Parse obj getting info from path file obj and changes faces of Mesh
 	// @throw 1 - file is NULL
 	void parseObj(std::string, object<T>&, std::string*);
+
+	//
+	// Parse obj getting info from path file obj and changes faces of Mesh
+	// @throw 1 - file is NULL
+	// Reference: https://stackoverflow.com/questions/60297299/run-length-decompression-using-c
+	void parseRLE(std::string&, std::string, std::pair<int, int>&);
 private:
 	//
 	// https://stackoverflow.com/questions/875249/how-to-get-current-directory

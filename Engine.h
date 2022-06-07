@@ -11,7 +11,7 @@ public:
 	//
 	// Method for drawing in bitmapBack_ from main window
 	// @params COLORREF** reference to array of pixels;
-	virtual void draw(COLORREF**, int, COORD) = 0;
+	virtual void draw(COLORREF**, int, COORD, int) = 0;
 
 	//
 	// Method for release the engine

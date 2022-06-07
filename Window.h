@@ -150,7 +150,12 @@ public:
 	//
 	// Initializing bitmap or resizing
 	//
-	void initializeBitmap();
+	void initializeBitmap(std::string = "");
+
+	//
+	// Initializing bitmap or resizing with LIF file
+	//
+	void refillBitmap(std::string&);
 
 	//
 	// get bitmap front && back size

@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "Constants.h"
 #include "RasterEngineGPU.h"
+#include "FileManager.h"
 #include <iostream>
 
 
@@ -8,6 +9,10 @@
 // Reference to class itself for onCreate, onUpdate, onDestroy in other scopes;
 //
 Window* window = 0;
+FileManager<float>* fileManager = new FileManager<float>();
+
+HWND _renderButton;
+int renderType = 1;
 
 //
 // Engine that will draw in window
@@ -147,7 +152,7 @@ void Window::initialize(Window& wnd) throw(int)
 
 
 
-void Window::initializeBitmap()
+void Window::initializeBitmap(std::string filePath)
 {
 	free(bitmapBack_);
 	buffer_ = size_.X * size_.Y;
@@ -156,10 +161,11 @@ void Window::initializeBitmap()
 
 	write(" = Main bitmap size is: " + std::to_string(size_.X) + 'x' + std::to_string(size_.Y) + " buffer: " + std::to_string(buffer_) + NEW_LINE);
 
-	for (int i = 0; i < buffer_; i++)
-	{
-		int l = randRange(2) * 255;
-		bitmapBack_[i] = RGB(l, l, l);
+	try {
+		refillBitmap(filePath);
+	}
+	catch (int err) {
+		write("Error in reading file: " + filePath + NEW_LINE);
 	}
 
 	//Positioning console
@@ -169,6 +175,42 @@ void Window::initializeBitmap()
 		CONSOLE_WIDTH + 3 * GetSystemMetrics(SM_CXSIZEFRAME),                                   // Width
 		CONSOLE_HEIGHT + GetSystemMetrics(SM_CYCAPTION) + 5 * GetSystemMetrics(SM_CYSIZEFRAME), // Height
 		0);
+
+}
+
+
+
+void Window::refillBitmap(std::string& filePath)
+{
+	// Random titles
+	/*
+	for (int i = 0; i < buffer_; i++)
+	{
+		int l = randRange(2) * 255;
+		bitmapBack_[i] = RGB(l, l, l);
+	}
+	*/
+	// From .lif titles
+	std::string lifSource;
+	std::pair<int, int> offset = { 0, 0 };
+	if (filePath == "")
+		fileManager->parseRLE(lifSource, FILE_OBJ_LIF, offset);
+	else
+		fileManager->parseRLE(lifSource, filePath, offset);
+	int index = -1;
+	for (int i = offset.second; i < size_.Y; i++)
+		for (int j = offset.first; j < size_.X; j++)
+		{
+			index++;
+			if (index >= lifSource.length())
+				break;
+			if (lifSource[index] == 'b')
+				bitmapBack_[i * size_.X + j] = RGB(0, 0, 0);
+			else if (lifSource[index] == 'o')
+				bitmapBack_[i * size_.X + j] = RGB(255, 255, 255);
+			else
+				break;
+		}
 }
 
 
@@ -222,6 +264,34 @@ void Window::onCreate()
 
 void Window::onConsoleCreate(const HWND& hConsole)
 {
+	CreateWindow(
+		TEXT("BUTTON"),
+		L"LIF",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		MARGIN_SMALL,
+		MARGIN_SMALL,
+		MARGIN_SMALL * 9,
+		MARGIN_SMALL * 3,
+		hConsole,
+		(HMENU) OPEN_FILE_BUTTON,
+		NULL,
+		NULL
+	);
+
+	_renderButton = CreateWindow(
+		TEXT("BUTTON"),
+		L"1",
+		WS_CHILD | WS_VISIBLE | WS_BORDER,
+		10 * MARGIN_SMALL,
+		MARGIN_SMALL,
+		MARGIN_SMALL * 3,
+		MARGIN_SMALL * 3,
+		hConsole,
+		(HMENU) CHANGE_RENDER_BUTTON,
+		NULL,
+		NULL
+	);
+
 	hConsoleTextBoxIn_ = CreateWindow (
 		TEXT("EDIT"),
 		0,
@@ -242,9 +312,9 @@ void Window::onConsoleCreate(const HWND& hConsole)
 		0,
 		WS_CHILD | WS_VISIBLE | WS_BORDER | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL,
 		MARGIN_SMALL,
-		MARGIN_SMALL,
+		5 * MARGIN_SMALL,
 		CONSOLE_WIDTH - 3 * MARGIN_SMALL,
-		CONSOLE_HEIGHT - 3 * MARGIN_SMALL - CONSOLE_TEXTBOX_HEIGHT,
+		CONSOLE_HEIGHT - 7 * MARGIN_SMALL - CONSOLE_TEXTBOX_HEIGHT,
 		hConsole,
 		NULL,
 		NULL,
@@ -318,7 +388,7 @@ void Window::onPaint()
 
 void Window::onRender()
 {
-	REGPU->draw(&bitmapBack_, buffer_, size_);
+	REGPU->draw(&bitmapBack_, buffer_, size_, renderType);
 }
 
 
@@ -425,6 +495,9 @@ void Window::listenConsoleCommand(LPSTR src)
 		consoleOutString_ += src;
 		consoleOutString_ += NEW_LINE;
 		consoleOutString_ += "Hello, world!";
+	}
+	else if (strcmp(src, "/clear") == 0) {
+		clear();
 	}
 	else if (strcmp(src, "/info gpu") == 0) {
 		consoleOutString_ += src;
@@ -638,11 +711,18 @@ LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wparam, LPARAM lparam)
 		{
 		case VK_OEM_3:
 			window->showHideConsole();
-			window->onRender();
 			break;
 
 		case VK_F11:
 			window->setFullscreen();
+			break;
+
+		case VK_F5:
+			REGPU->gswitch();
+			break;
+
+		case VK_F9:
+			window->initializeBitmap();
 			break;
 		}
 		break;
@@ -651,18 +731,20 @@ LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wparam, LPARAM lparam)
 		break;
 
 	case WM_PAINT:
-		//window->onRender();
+		window->onRender();
 		window->onPaint();
 		break;
 
 	case WM_SIZE:
 		window->setWindowSize(LOWORD(lparam), HIWORD(lparam));
-		if (wparam > 0)
+		if (wparam > 0) {
 			window->initializeBitmap();
+		}
 		break;
 
 	case WM_EXITSIZEMOVE:
 	case WM_ENTERSIZEMOVE:
+		REGPU->gswitch();
 		window->initializeBitmap();
 		break;
 
@@ -684,6 +766,64 @@ LRESULT CALLBACK WndProcConsole(HWND hConsole, UINT msg, WPARAM wparam, LPARAM l
 {
 	switch (msg)
 	{
+	case WM_COMMAND:
+		switch (wparam)
+		{
+		case OPEN_FILE_BUTTON:
+		{
+			REGPU->gswitch();
+			OPENFILENAME open;
+			wchar_t filePath[100];
+
+			ZeroMemory(&open, sizeof(OPENFILENAME));
+
+			open.lStructSize = sizeof(OPENFILENAME);
+			open.lpstrFile = filePath;
+			open.lpstrFile[0] = '\0';
+			open.nMaxFile = 100;
+			open.lpstrFilter = L"LIF\0*.LIF\0";
+			open.nFilterIndex = 1;
+
+			GetOpenFileName(&open);
+			std::wstring ws(filePath);
+			std::string path(ws.begin(), ws.end());
+			window->write("Openned lif file " + path + NEW_LINE);
+
+			window->initializeBitmap(path);
+			REGPU->gswitch();
+			break;
+		}
+
+		case CHANGE_RENDER_BUTTON:
+		{
+			if (renderType == 1)
+				renderType = 0;
+			else
+				renderType = 1;
+			std::string renderString = std::to_string(renderType);
+			std::wstring stemp = std::wstring(renderString.begin(), renderString.end());
+			LPCWSTR sw = stemp.c_str();
+
+			_renderButton = NULL;
+			_renderButton = CreateWindow(
+				TEXT("BUTTON"),
+				sw,
+				WS_CHILD | WS_VISIBLE | WS_BORDER,
+				10 * MARGIN_SMALL,
+				MARGIN_SMALL,
+				MARGIN_SMALL * 3,
+				MARGIN_SMALL * 3,
+				hConsole,
+				(HMENU)CHANGE_RENDER_BUTTON,
+				NULL,
+				NULL
+			);
+			break;
+		}
+		}
+		break;
+		
+
 	case WM_CREATE:
 		window->onConsoleCreate(hConsole);
 		break;

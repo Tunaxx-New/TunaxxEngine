@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Window">
+      <UniqueIdentifier>{8ff1de9e-95d5-4fe8-93bf-b4ecf8bd229b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{3b315e3b-83fe-49e6-b9a2-7563fa532ab8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com">
+      <UniqueIdentifier>{3221f955-046a-4581-813c-5006dae72ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx">
+      <UniqueIdentifier>{fca4c051-796e-403c-b1a7-6bbcc67f9f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\headers">
+      <UniqueIdentifier>{3ca8132e-0da9-45ed-b65a-c658e85a064e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\sources">
+      <UniqueIdentifier>{ae6ac3cb-00d4-4e99-9b52-5b847d18a83b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\assets">
+      <UniqueIdentifier>{8a310a5b-857a-4d4c-9c04-a32819e43243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\headers\Engines">
+      <UniqueIdentifier>{f158e8e5-bc64-437d-a695-1c23b2748e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\cl">
+      <UniqueIdentifier>{dba1fd3c-91a8-4ffd-9cb1-6b61424781af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\assets\objects">
+      <UniqueIdentifier>{5b9af91d-fcfa-4ab6-9ba0-772fdf2f8b58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\headers\objects">
+      <UniqueIdentifier>{fb18d744-0c28-4325-a9b3-665213c9a652}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\assets\FileManager">
+      <UniqueIdentifier>{05657a37-8c67-4a3d-9c28-0b109f701915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="com\tunaxx\headers\FileManager">
+      <UniqueIdentifier>{e17204b7-09b6-4cf9-9d20-45ee8db936da}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>com\tunaxx</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>com\tunaxx\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterEngineGPU.cpp">
+      <Filter>com\tunaxx\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="GPU.cpp">
+      <Filter>com\tunaxx\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexMesh.cpp">
+      <Filter>com\tunaxx\assets\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="FileManager.cpp">
+      <Filter>com\tunaxx\assets\FileManager</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUS.cpp">
+      <Filter>com\tunaxx\sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Window.h">
+      <Filter>com\tunaxx\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>com\tunaxx\assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>com\tunaxx\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterEngineGPU.h">
+      <Filter>com\tunaxx\headers\Engines</Filter>
+    </ClInclude>
+    <ClInclude Include="GPU.h">
+      <Filter>com\tunaxx\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexMesh.h">
+      <Filter>com\tunaxx\headers\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="FileManager.h">
+      <Filter>com\tunaxx\headers\FileManager</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUS.h">
+      <Filter>com\tunaxx\headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="exp.txt">
+      <Filter>com\tunaxx\assets</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="paint.cl">
+      <Filter>com\tunaxx\cl</Filter>
+    </None>
+  </ItemGroup>
+</Project>

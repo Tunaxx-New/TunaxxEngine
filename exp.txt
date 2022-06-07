@@ -1,0 +1,26 @@
+//I wouldn't able to continue, if i had not read post about code style
+//Also, if i had not implement console in my engine. It looks more volumetric
+//And of course, snake game
+//  _______
+// |___*...|
+// |___;+..| - Snake(yay)
+//    _|_
+//
+//I finally got this feeling, when i repaint in onPaint() method every pixel to random color
+//I did not expect, but this for loop faster then i imagined; Can i implement this in GPU?
+//  _______
+// |-.-.-.-|
+// |-....-.| - CPU(yay)
+//    _|_
+//
+//
+// ...Amd(oops And), i got it; I Have function draw in RasterEngine that (in past) call gpu_.execute - different executes overloaded
+//execute(bitmap*, randomPixels) - executes Fill, that fills bitmap with vector Pixels
+//TODO:
+//executeMandelbrotSet(bitmap*) - to see how fast gpu can be
+//executeConwayGoL(bitmap*)     - to see how fast gpu can be
+//
+// Fractal - V this is something beautiful
+// gol     - V cool, i found that random tiles have same
+//
+// Now, i should create File manager class and typical object classes
